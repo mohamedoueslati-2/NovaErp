@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NovaERP</title>
+</head>
+<body>
+<h2>Dashboard</h2>
+<p>Bienvenue, <span th:text="${user.nom}"></span> <span th:text="${user.prenom}"></span>!</p>
+<p>Rôle : <span th:text="${user.role.name}"></span></p>
+<nav>
+    <a href="/user/profile">Mon profil</a> |
+    <a href="/logout">Déconnexion</a>
+</nav>
+</body>
+</html>

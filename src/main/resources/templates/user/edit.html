@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Profil - NovaERP</title>
+</head>
+<body>
+<h2>Modifier Profil</h2>
+<form action="/user/profile/edit" method="post">
+    <div>
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" th:value="${user.nom}" required><br>
+    </div>
+    <div>
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" th:value="${user.prenom}" required><br>
+    </div>
+    <div>
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" th:value="${user.email}" required><br>
+    </div>
+    <div>
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" th:value="${user.password}" required><br>
+    </div>
+    <button type="submit">Enregistrer</button>
+    <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+</form>
+<a href="/user/profile">Annuler</a>
+</body>
+</html>

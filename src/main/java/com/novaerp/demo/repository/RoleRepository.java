@@ -4,7 +4,6 @@ import com.novaerp.demo.model.entity.Role;
 import com.novaerp.demo.model.typologie.RoleTypologie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 @Repository
