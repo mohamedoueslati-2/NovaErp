@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier mon Profil - NovaERP</title>
+    <title>Modifier un Utilisateur - NovaERP</title>
     <style>
         * {
             margin: 0;
@@ -87,7 +87,8 @@
             font-weight: 600;
             font-size: 14px;
         }
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -95,14 +96,11 @@
             font-size: 15px;
             transition: all 0.3s;
         }
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .form-group input[readonly] {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
         }
         .actions {
             display: flex;
@@ -123,12 +121,12 @@
             display: inline-block;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
             color: white;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
         }
         .btn-secondary {
             background-color: #f5f5f5;
@@ -146,14 +144,16 @@
             border-left: 4px solid #c62828;
             font-size: 14px;
         }
-        .info-box {
-            background-color: #e3f2fd;
-            padding: 12px;
+        .required {
+            color: #c62828;
+        }
+        .user-id {
+            background-color: #f5f5f5;
+            padding: 10px;
             border-radius: 6px;
             margin-bottom: 20px;
-            border-left: 4px solid #2196F3;
             font-size: 14px;
-            color: #1565c0;
+            color: #666;
         }
     </style>
 </head>
@@ -161,51 +161,61 @@
 <div class="header">
     <div class="header-content">
         <div class="logo">🏢 NovaERP</div>
-        <div>Modifier mon Profil</div>
+        <div>Modifier un Utilisateur</div>
     </div>
 </div>
 
 <div class="container">
     <div class="breadcrumb">
         <a href="/user/dashboard">🏠 Dashboard</a> /
-        <a href="/user/profile">Mon Profil</a> /
+        <a href="/user/manage">Gestion Utilisateurs</a> /
         <span>Modifier</span>
     </div>
 
     <div class="form-card">
-        <h2>✏️ Modifier mon Profil</h2>
-        <p class="subtitle">Mettez à jour vos informations personnelles</p>
+        <h2>✏️ Modifier l'Utilisateur</h2>
+        <p class="subtitle">Mettre à jour les informations de l'utilisateur</p>
+
+        <div class="user-id">
+            <strong>ID Utilisateur:</strong> <span th:text="${userToEdit.id}"></span>
+        </div>
 
         <p th:if="${error}" class="error">⚠️ <span th:text="${error}"></span></p>
 
-        <div class="info-box">
-            ℹ️ Votre rôle ne peut pas être modifié. Contactez un administrateur si nécessaire.
-        </div>
-
-        <form action="/user/profile/edit" method="post">
+        <form th:action="@{/user/edit/{id}(id=${userToEdit.id})}" method="post">
             <div class="form-group">
-                <label for="nom">📝 Nom</label>
-                <input type="text" id="nom" name="nom" th:value="${user.nom}" required>
+                <label for="nom">📝 Nom <span class="required">*</span></label>
+                <input type="text" id="nom" name="nom" th:value="${userToEdit.nom}" required>
             </div>
 
             <div class="form-group">
-                <label for="prenom">📝 Prénom</label>
-                <input type="text" id="prenom" name="prenom" th:value="${user.prenom}" required>
+                <label for="prenom">📝 Prénom <span class="required">*</span></label>
+                <input type="text" id="prenom" name="prenom" th:value="${userToEdit.prenom}" required>
             </div>
 
             <div class="form-group">
-                <label for="email">📧 Email</label>
-                <input type="email" id="email" name="email" th:value="${user.email}" required>
+                <label for="email">📧 Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" th:value="${userToEdit.email}" required>
             </div>
 
             <div class="form-group">
-                <label for="password">🔒 Mot de passe</label>
-                <input type="password" id="password" name="password" th:value="${user.password}" required>
+                <label for="password">🔒 Mot de passe <span class="required">*</span></label>
+                <input type="password" id="password" name="password" th:value="${userToEdit.password}" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label for="roleId">👔 Rôle <span class="required">*</span></label>
+                <select id="roleId" name="roleId" required>
+                    <option th:each="role : ${roles}"
+                            th:value="${role.id}"
+                            th:text="${role.name}"
+                            th:selected="${role.id == userToEdit.role.id}"></option>
+                </select>
             </div>
 
             <div class="actions">
                 <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
-                <a href="/user/profile" class="btn btn-secondary">❌ Annuler</a>
+                <a href="/user/manage" class="btn btn-secondary">❌ Annuler</a>
             </div>
         </form>
     </div>

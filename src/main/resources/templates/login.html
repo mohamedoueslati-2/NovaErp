@@ -4,20 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - NovaERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .error::before {
+            content: "⚠️";
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
-<h1>Connexion</h1>
-<form action="/login" method="post">
-    <div>
-        <label for="email">Email :</label>
-        <input type="email" id="email" name="email" placeholder="Email" required><br>
+<div class="login-container">
+    <div class="logo">
+        <h1>🏢 NovaERP</h1>
+        <p>Système de Gestion d'Entreprise</p>
     </div>
-    <div>
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" placeholder="Mot de passe" required><br>
+
+    <h2>Connexion</h2>
+
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label for="email">📧 Adresse Email</label>
+            <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" required autofocus>
+        </div>
+
+        <div class="form-group">
+            <label for="password">🔒 Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <div class="footer">
+        <p>&copy; 2025 NovaERP. Tous droits réservés.</p>
     </div>
-    <button type="submit">Se connecter</button>
-    <p th:if="${error}" th:text="${error}" style="color: red;"></p>
-</form>
+</div>
 </body>
 </html>

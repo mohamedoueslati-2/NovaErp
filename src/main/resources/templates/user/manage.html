@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs - NovaERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .user-info {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .search-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .search-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-search {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-search:hover {
+            background-color: #0b7dda;
+        }
+        .btn-reset {
+            background-color: #9E9E9E;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #757575;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .btn-add:hover {
+            background-color: #45a049;
+        }
+        .btn-edit {
+            background-color: #FF9800;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-edit:hover {
+            background-color: #e68900;
+        }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+        .results-info {
+            margin-bottom: 15px;
+            color: #666;
+            font-style: italic;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .actions {
+            white-space: nowrap;
+        }
+        .actions a {
+            margin-right: 5px;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #c62828;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        nav {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        nav a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Gestion des Utilisateurs</h2>
+
+    <div class="user-info">
+        <p>Connecté en tant que : <strong th:text="${user.nom} + ' ' + ${user.prenom}"></strong> (<span th:text="${user.role.name}"></span>)</p>
+    </div>
+
+    <div th:if="${param.error}" class="error">
+        <p th:if="${param.error[0] == 'cannot-delete-self'}">❌ Vous ne pouvez pas vous supprimer vous-même !</p>
+    </div>
+
+    <!-- Section de recherche -->
+    <div class="search-section">
+        <h3 style="margin-bottom: 15px; color: #333;">🔍 Rechercher un utilisateur</h3>
+        <form action="/user/manage" method="get" class="search-form">
+            <div class="form-group">
+                <label for="search">Nom, Prénom ou Email :</label>
+                <input type="text"
+                       id="search"
+                       name="search"
+                       placeholder="Rechercher..."
+                       th:value="${searchQuery}">
+            </div>
+
+            <div class="form-group">
+                <label for="role">Filtrer par rôle :</label>
+                <select id="role" name="role">
+                    <option value="">Tous les rôles</option>
+                    <option th:each="r : ${roles}"
+                            th:value="${r.name}"
+                            th:text="${r.name}"
+                            th:selected="${selectedRole == r.name.toString()}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-search">🔍 Rechercher</button>
+            </div>
+
+            <div class="form-group">
+                <a href="/user/manage" class="btn btn-reset">🔄 Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bouton ajouter -->
+    <a href="/user/add" class="btn btn-add">➕ Ajouter un utilisateur</a>
+
+    <!-- Informations sur les résultats -->
+    <div class="results-info">
+        <p th:if="${searchQuery != null and !searchQuery.isEmpty()} or ${selectedRole != null and !selectedRole.isEmpty()}">
+            Résultats de recherche : <strong th:text="${users.size()}"></strong> utilisateur(s) trouvé(s)
+        </p>
+        <p th:unless="${searchQuery != null and !searchQuery.isEmpty()} or ${selectedRole != null and !selectedRole.isEmpty()}">
+            Total : <strong th:text="${users.size()}"></strong> utilisateur(s)
+        </p>
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    <div th:if="${users.size() > 0}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}"></td>
+                <td th:text="${u.nom}"></td>
+                <td th:text="${u.prenom}"></td>
+                <td th:text="${u.email}"></td>
+                <td>
+                            <span th:text="${u.role.name}"
+                                  th:style="${u.role.name.name() == 'ADMIN' ? 'color: #f44336; font-weight: bold;' :
+                                            (u.role.name.name() == 'STOCK' ? 'color: #2196F3; font-weight: bold;' :
+                                            'color: #4CAF50; font-weight: bold;')}">
+                            </span>
+                </td>
+                <td class="actions">
+                    <a th:href="@{/user/edit/{id}(id=${u.id})}" class="btn btn-edit">✏️ Modifier</a>
+                    <a th:href="@{/user/delete/{id}(id=${u.id})}"
+                       class="btn btn-delete"
+                       onclick="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cet utilisateur ?\n\nNom : ' + this.closest('tr').children[1].textContent + ' ' + this.closest('tr').children[2].textContent);">
+                        🗑️ Supprimer
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Message si aucun résultat -->
+    <div th:if="${users.size() == 0}" class="no-results">
+        <p>😕 Aucun utilisateur trouvé</p>
+        <p th:if="${searchQuery != null and !searchQuery.isEmpty()} or ${selectedRole != null and !selectedRole.isEmpty()}">
+            Essayez de modifier vos critères de recherche
+        </p>
+    </div>
+
+    <nav>
+        <a href="/user/dashboard">⬅️ Retour au dashboard</a>
+    </nav>
+</div>
+</body>
+</html>
