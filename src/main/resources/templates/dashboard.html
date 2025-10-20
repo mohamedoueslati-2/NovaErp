@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">NovaERP</a>
+        <div class="navbar-nav ms-auto">
+                <span class="navbar-text text-white me-3">
+                    <i class="fas fa-user"></i> <span th:text="${username}"></span>
+                </span>
+            <a href="/profile" class="btn btn-outline-light btn-sm me-2">
+                <i class="fas fa-user-circle"></i> Profil
+            </a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Tableau de bord</h2>
+            <p>Bienvenue <strong th:text="${username}"></strong></p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Menu ADMIN -->
+        <div sec:authorize="hasRole('ADMIN')" class="col-md-4 mb-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <i class="fas fa-users-cog fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Administration</h5>
+                    <p class="card-text">Gestion des utilisateurs et rôles</p>
+                    <span class="badge bg-danger">ADMIN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu STOCK -->
+        <div sec:authorize="hasRole('STOCK')" class="col-md-4 mb-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Gestion Stock</h5>
+                    <p class="card-text">Produits, catégories, fournisseurs</p>
+                    <span class="badge bg-primary">STOCK</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu VENTE -->
+        <div sec:authorize="hasRole('VENTE')" class="col-md-4 mb-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Gestion Ventes</h5>
+                    <p class="card-text">Commandes, ventes, clients</p>
+                    <span class="badge bg-success">VENTE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h5>Vos rôles :</h5>
+                <span th:each="role : ${roles}" class="badge bg-secondary me-2" th:text="${role.authority}"></span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

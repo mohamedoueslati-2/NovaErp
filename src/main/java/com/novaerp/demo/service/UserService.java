@@ -1,16 +1,28 @@
 package com.novaerp.demo.service;
 
 import com.novaerp.demo.model.entity.User;
+import com.novaerp.demo.model.typologie.RoleTypologie;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
-    User login(String email, String password);
-    Optional<User> findById(Long id);
-    Optional<User> findByEmail(String email);
     List<User> findAll();
-    List<User> searchUsers(String search, String role);
+
+    User findById(Long id);
+
+    User findByEmail(String email);
+
     User save(User user);
-    User update(User user);
-    void deleteById(Long id);
+
+    User update(Long id, User updatedUser);
+
+    void delete(Long id);
+
+    void updateProfile(String email, User updatedUser);
+
+    void assignRole(Long userId, RoleTypologie roleTypologie);
+
+    void removeRole(Long userId, RoleTypologie roleTypologie);
+
+    boolean existsByEmail(String email);
 }
