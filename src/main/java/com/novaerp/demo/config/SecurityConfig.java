@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/dashboard", "/users/profile").authenticated()
                         .requestMatchers("/users/**", "/roles/**").hasRole("ADMIN")
+                        .requestMatchers("/stock/**").hasRole("STOCK")
                         .anyRequest().denyAll()
                 )
                 .formLogin(form -> form

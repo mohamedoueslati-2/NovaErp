@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catégorie - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tags"></i>
+                        <span th:text="${categorie.id != null} ? 'Modifier Catégorie' : 'Nouvelle Catégorie'"></span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/stock/categories/save}" th:object="${categorie}" method="post">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Code <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{code}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('code')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('code')}"
+                                 th:errors="*{code}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{nom}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}"
+                                 th:errors="*{nom}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ordre d'affichage</label>
+                            <input type="number" th:field="*{ordreAffichage}" class="form-control">
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/stock/categories" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
