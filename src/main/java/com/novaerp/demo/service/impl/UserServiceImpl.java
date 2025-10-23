@@ -113,6 +113,15 @@ public class UserServiceImpl implements UserService {
         existingUser.setNom(updatedUser.getNom());
         existingUser.setPrenom(updatedUser.getPrenom());
 
+        // Vérifier si l'email a changé
+        if (updatedUser.getEmail() != null && !existingUser.getEmail().equals(updatedUser.getEmail())) {
+            if (existsByEmail(updatedUser.getEmail())) {
+                throw new RuntimeException("Un utilisateur avec cet email existe déjà: " + updatedUser.getEmail());
+            }
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+
+        // Encoder le mot de passe uniquement s'il est fourni
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }

@@ -30,14 +30,11 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model, Authentication auth) {
-        String email = auth.getName();
-        User user = userRepository.findByEmailWithRoles(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
-
-        model.addAttribute("user", user);
-        return "profile";
+    public String profile() {
+        return "redirect:/users/profile";
     }
+
+
 
     @GetMapping("/access-denied")
     public String accessDenied() {
