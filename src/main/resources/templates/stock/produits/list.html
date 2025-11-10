@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Produits - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .filter-section { background-color: #f8f9fa; border-radius: 10px; }
+        .stat-card { border-left: 4px solid; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .table-actions { white-space: nowrap; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a href="/dashboard" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-home"></i> Tableau de bord
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card border-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Total Produits</h6>
+                            <h3 th:text="${statistics.totalProduits}">0</h3>
+                        </div>
+                        <i class="fas fa-boxes fa-3x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card border-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">En Rupture</h6>
+                            <h3 class="text-danger" th:text="${statistics.produitsEnRupture}">0</h3>
+                        </div>
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card border-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Valeur Stock</h6>
+                            <h3 class="text-success">
+                                <span th:text="${#numbers.formatDecimal(statistics.valeurStock ?: 0, 1, 2)}">0</span> TND
+                            </h3>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-3x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-box text-primary"></i> Gestion des Produits</h2>
+        <div>
+            <button class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#filterSection">
+                <i class="fas fa-filter"></i> Filtres
+            </button>
+            <a href="/stock/produits/new" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nouveau Produit
+            </a>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Section Filtres Avancés -->
+    <div class="collapse show" id="filterSection">
+        <div class="card filter-section mb-4">
+            <div class="card-body">
+                <form method="get" action="/stock/produits" th:object="${criteria}">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Recherche</label>
+                            <input type="text" th:field="*{keyword}" class="form-control"
+                                   placeholder="Nom, référence...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Catégorie</label>
+                            <select th:field="*{categorieId}" class="form-select">
+                                <option value="">Toutes</option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.nom}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fournisseur</label>
+                            <select th:field="*{fournisseurId}" class="form-select">
+                                <option value="">Tous</option>
+                                <option th:each="four : ${fournisseurs}"
+                                        th:value="${four.id}"
+                                        th:text="${four.nom}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Unité</label>
+                            <select th:field="*{unite}" class="form-select">
+                                <option value="">Toutes</option>
+                                <option value="Pièce">Pièce</option>
+                                <option value="Kg">Kg</option>
+                                <option value="Litre">Litre</option>
+                                <option value="Mètre">Mètre</option>
+                                <option value="Carton">Carton</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Prix Min (TND)</label>
+                            <input type="number" step="0.01" th:field="*{prixMin}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Prix Max (TND)</label>
+                            <input type="number" step="0.01" th:field="*{prixMax}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Qté Min</label>
+                            <input type="number" th:field="*{quantiteMin}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Qté Max</label>
+                            <input type="number" th:field="*{quantiteMax}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Trier par</label>
+                            <select th:field="*{sortBy}" class="form-select">
+                                <option value="nom">Nom</option>
+                                <option value="reference">Référence</option>
+                                <option value="prix">Prix</option>
+                                <option value="quantite">Quantité</option>
+                                <option value="createdAt">Date création</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Ordre</label>
+                            <select th:field="*{sortDirection}" class="form-select">
+                                <option value="asc">Croissant</option>
+                                <option value="desc">Décroissant</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{enRupture}" class="form-check-input" id="rupture">
+                                <label class="form-check-label" for="rupture">
+                                    Afficher uniquement les produits en rupture
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Appliquer les filtres
+                        </button>
+                        <a href="/stock/produits" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo"></i> Réinitialiser
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-list"></i> Liste des Produits
+            (<span th:text="${totalItems}">0</span> résultats)
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Référence</th>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Fournisseur</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Unité</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="produit : ${produits}"
+                        th:classappend="${produit.quantite <= produit.seuilAlerte} ? 'table-warning' : ''">
+                        <td><strong th:text="${produit.reference}"></strong></td>
+                        <td th:text="${produit.nom}"></td>
+                        <td><span class="badge bg-info" th:text="${produit.categorie.nom}"></span></td>
+                        <td th:text="${produit.fournisseur.nom}"></td>
+                        <td><span th:text="${#numbers.formatDecimal(produit.prix, 1, 2)}"></span> TND</td>
+                        <td>
+                            <span th:if="${produit.quantite <= produit.seuilAlerte}" class="badge bg-danger">
+                                <i class="fas fa-exclamation-triangle"></i> <span th:text="${produit.quantite}"></span>
+                            </span>
+                            <span th:unless="${produit.quantite <= produit.seuilAlerte}" th:text="${produit.quantite}"></span>
+                        </td>
+                        <td th:text="${produit.unite}"></td>
+                        <td class="table-actions">
+                            <a th:href="@{/stock/produits/edit/{id}(id=${produit.id})}"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/stock/produits/delete/{id}(id=${produit.id})}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Êtes-vous sûr ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${produits.isEmpty()}">
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>Aucun produit trouvé</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="card-footer" th:if="${totalPages > 1}">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/stock/produits(page=${currentPage - 1}, size=${pageSize})}">
+                            Précédent
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/stock/produits(page=${i}, size=${pageSize})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/stock/produits(page=${currentPage + 1}, size=${pageSize})}">
+                            Suivant
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

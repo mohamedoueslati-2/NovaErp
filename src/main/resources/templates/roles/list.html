@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Rôles - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a href="/dashboard" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-home"></i> Tableau de bord
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user-tag text-primary"></i> Gestion des Rôles</h2>
+        <a href="/roles/new" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouveau Rôle
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-list"></i> Liste des Rôles (<span th:text="${roles.size()}"></span>)
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom du Rôle</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="role : ${roles}">
+                        <td><strong th:text="${role.id}"></strong></td>
+                        <td th:text="${role.name}"></td>
+                        <td>
+                            <a th:href="@{/roles/edit/{id}(id=${role.id})}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/roles/delete/{id}(id=${role.id})}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${roles.isEmpty()}">
+                        <td colspan="3" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>Aucun rôle trouvé</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
