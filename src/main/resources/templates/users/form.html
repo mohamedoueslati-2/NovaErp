@@ -6,113 +6,334 @@
     <title th:text="${user.id != null ? 'Modifier Utilisateur' : 'Nouvel Utilisateur'}"></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-modern {
+            background: var(--primary-gradient);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 0;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .btn-nav {
+            border-radius: 20px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+
+        .btn-nav:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .form-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .form-header h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .form-header i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-body {
+            padding: 2.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+
+        .form-check {
+            background: #f7fafc;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-check:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .form-check-input {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-top: 0.15rem;
+        }
+
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .alert-modern {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            animation: slideInDown 0.5s ease;
+        }
+
+        .btn-modern {
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary-modern {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .btn-secondary-modern {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary-modern:hover {
+            background: #4a5568;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .invalid-feedback {
+            font-weight: 500;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-body {
+                padding: 1.5rem;
+            }
+            .form-header {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/dashboard">NovaERP</a>
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
         <div class="navbar-nav ms-auto">
-            <a href="/users" class="btn btn-outline-light btn-sm me-2">
-                <i class="fas fa-arrow-left"></i> Retour
+            <a href="/users" class="btn btn-nav btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left"></i> <span class="d-none d-sm-inline">Retour</span>
             </a>
         </div>
     </div>
 </nav>
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4>
-                        <i class="fas fa-user-edit"></i>
-                        <span th:text="${user.id != null ? 'Modifier Utilisateur' : 'Nouvel Utilisateur'}"></span>
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <div th:if="${error}" class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
-                    </div>
-
-                    <form th:action="${user.id != null ? '/users/' + user.id : '/users'}"
-                          th:object="${user}"
-                          method="post">
-
-                        <div class="mb-3">
-                            <label for="nom" class="form-label">Nom *</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="nom"
-                                   th:field="*{nom}"
-                                   th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}"
-                                 th:errors="*{nom}"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="prenom" class="form-label">Prénom *</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="prenom"
-                                   th:field="*{prenom}"
-                                   th:classappend="${#fields.hasErrors('prenom')} ? 'is-invalid' : ''"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('prenom')}"
-                                 th:errors="*{prenom}"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email"
-                                   class="form-control"
-                                   id="email"
-                                   th:field="*{email}"
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
-                                 th:errors="*{email}"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                Mot de passe <span th:if="${user.id == null}">*</span>
-                                <small th:if="${user.id != null}" class="text-muted">(laisser vide pour ne pas modifier)</small>
-                            </label>
-                            <input type="password"
-                                   class="form-control"
-                                   id="password"
-                                   th:field="*{password}"
-                                   th:required="${user.id == null}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Rôles *</label>
-                            <div th:each="role : ${roles}">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           th:id="'role' + ${role.id}"
-                                           th:field="*{roles}"
-                                           th:value="${role.id}">
-                                    <label class="form-check-label" th:for="'role' + ${role.id}">
-                                        <span class="badge bg-secondary" th:text="${role.name}"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="/users" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Annuler
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="container form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-user-edit"></i>
+            <h4 th:text="${user.id != null ? 'Modifier Utilisateur' : 'Nouvel Utilisateur'}"></h4>
+        </div>
+        <div class="form-body">
+            <div th:if="${error}" class="alert alert-danger alert-modern">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
             </div>
+
+            <form th:action="${user.id != null ? '/users/' + user.id : '/users'}"
+                  th:object="${user}"
+                  method="post">
+
+                <div class="mb-4">
+                    <label for="nom" class="form-label">
+                        <i class="fas fa-user me-2"></i>Nom *
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="nom"
+                           th:field="*{nom}"
+                           th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''"
+                           placeholder="Entrez le nom"
+                           required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}"
+                         th:errors="*{nom}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="prenom" class="form-label">
+                        <i class="fas fa-user me-2"></i>Prénom *
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="prenom"
+                           th:field="*{prenom}"
+                           th:classappend="${#fields.hasErrors('prenom')} ? 'is-invalid' : ''"
+                           placeholder="Entrez le prénom"
+                           required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('prenom')}"
+                         th:errors="*{prenom}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email *
+                    </label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                           placeholder="exemple@email.com"
+                           required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                         th:errors="*{email}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Mot de passe
+                        <span th:if="${user.id == null}">*</span>
+                        <small th:if="${user.id != null}" class="text-muted">(laisser vide pour ne pas modifier)</small>
+                    </label>
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           th:field="*{password}"
+                           placeholder="••••••••"
+                           th:required="${user.id == null}">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-shield-alt me-2"></i>Rôles *
+                    </label>
+                    <div th:each="role : ${roles}">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   th:id="'role' + ${role.id}"
+                                   th:field="*{roles}"
+                                   th:value="${role.id}">
+                            <label class="form-check-label" th:for="'role' + ${role.id}">
+                                <span class="badge bg-primary" th:text="${role.name}"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="/users" class="btn btn-secondary-modern">
+                        <i class="fas fa-times me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary-modern">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -8,174 +8,524 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            height: 100%;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --admin-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --stock-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --vente-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
         }
+
+        .navbar-modern {
+            background: var(--primary-gradient);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 0;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .btn-nav {
+            border-radius: 20px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+
+        .btn-nav:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 15px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .welcome-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid #667eea;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .welcome-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .welcome-header h1 {
+            color: #2d3748;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-header p {
+            color: #718096;
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        .modules-section {
+            flex: 0 0 auto;
+            margin-bottom: 2rem;
+        }
+
         .module-card {
             text-decoration: none;
-            color: inherit;
+            display: block;
+            transition: transform 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
         }
+
+        .module-card:nth-child(1) { animation-delay: 0.1s; }
+        .module-card:nth-child(2) { animation-delay: 0.2s; }
+        .module-card:nth-child(3) { animation-delay: 0.3s; }
+
         .module-card:hover {
-            text-decoration: none;
+            transform: translateY(-8px);
+        }
+
+        .card-admin, .card-stock, .card-vente {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background: white;
+        }
+
+        .card-admin:hover, .card-stock:hover, .card-vente:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .module-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .icon-admin {
+            background: var(--admin-gradient);
+        }
+
+        .icon-stock {
+            background: var(--stock-gradient);
+        }
+
+        .icon-vente {
+            background: var(--vente-gradient);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .card-text {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .badge-stock-custom {
+            background: var(--stock-gradient);
+            color: white;
+        }
+
+        .badge-vente-custom {
+            background: var(--vente-gradient);
+            color: white;
+        }
+
+        .module-actions {
+            margin-top: 1.5rem;
+        }
+
+        .module-btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.7rem 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .btn-admin {
+            background: var(--admin-gradient);
+        }
+
+        .btn-admin:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .btn-stock {
+            background: var(--stock-gradient);
+        }
+
+        .btn-stock:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .btn-vente {
+            background: var(--vente-gradient);
+        }
+
+        .btn-vente:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .user-info-section {
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        .user-info-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: none;
+            overflow: hidden;
+        }
+
+        .user-info-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .user-info-body {
+            padding: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background: #f7fafc;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .info-content strong {
+            color: #2d3748;
+            display: block;
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .info-content span {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .role-badge {
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 0.2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dashboard-footer {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            margin-top: 1rem;
+        }
+
+        .dashboard-footer p {
+            margin: 0;
+            color: #718096;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-header h1 { font-size: 1.4rem; }
+            .welcome-icon { width: 50px; height: 50px; font-size: 1.4rem; }
+            .module-icon { width: 65px; height: 65px; font-size: 2rem; }
+            .dashboard-container {
+                padding: 1.5rem 15px;
+            }
+            .card-body { padding: 1.5rem !important; }
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-modern">
     <div class="container-fluid">
         <a class="navbar-brand" href="/dashboard">
             <i class="fas fa-chart-line"></i> NovaERP
         </a>
-        <div class="navbar-nav ms-auto">
-            <span class="navbar-text text-white me-3">
-                <i class="fas fa-user"></i> <span th:text="${username}"></span>
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            <span class="navbar-text text-white me-3 d-none d-md-inline">
+                <i class="fas fa-user-circle"></i> <span th:text="${username}"></span>
             </span>
-            <a href="/users/profile" class="btn btn-outline-light btn-sm me-2">
-                <i class="fas fa-user-circle"></i> Profil
+            <a href="/users/profile" class="btn btn-nav btn-outline-light btn-sm me-2">
+                <i class="fas fa-user"></i> <span class="d-none d-sm-inline">Profil</span>
             </a>
             <form th:action="@{/logout}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                <button type="submit" class="btn btn-nav btn-outline-light btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> <span class="d-none d-sm-inline">Déconnexion</span>
                 </button>
             </form>
         </div>
     </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container dashboard-container">
     <!-- En-tête de bienvenue -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="alert alert-primary d-flex align-items-center">
-                <i class="fas fa-info-circle fa-2x me-3"></i>
-                <div>
-                    <h4 class="mb-0">Bienvenue <strong th:text="${username}"></strong></h4>
-                    <p class="mb-0">Sélectionnez un module pour commencer</p>
-                </div>
+    <div class="welcome-header">
+        <div class="d-flex align-items-center">
+            <div class="welcome-icon me-4">
+                <i class="fas fa-hand-sparkles"></i>
+            </div>
+            <div>
+                <h1>Bienvenue, <span th:text="${username}"></span> !</h1>
+                <p>Sélectionnez un module pour accéder aux fonctionnalités</p>
             </div>
         </div>
     </div>
 
     <!-- Modules disponibles -->
-    <div class="row">
-        <!-- Module ADMIN -->
-        <div sec:authorize="hasRole('ADMIN')" class="col-lg-4 col-md-6 mb-4">
-            <a href="/users" class="module-card">
-                <div class="card border-danger h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-users-cog fa-4x text-danger mb-3"></i>
-                        <h5 class="card-title">Administration</h5>
-                        <p class="card-text">Gestion des utilisateurs et rôles</p>
-                        <div class="mt-3">
-                            <span class="badge bg-danger me-1">ADMIN</span>
-                        </div>
-                        <hr>
-                        <div class="d-grid gap-2">
-                            <a href="/users" class="btn btn-outline-danger btn-sm">                                <i class="fas fa-users"></i> Utilisateurs
-                            </a>
-                            <a href="/roles" class="btn btn-outline-danger btn-sm">
-                                <i class="fas fa-user-tag"></i> Rôles
-                            </a>
+    <div class="modules-section">
+        <div class="row g-4">
+            <!-- Module ADMIN -->
+            <div sec:authorize="hasRole('ADMIN')" class="col-lg-4 col-md-6">
+                <a href="/users" class="module-card">
+                    <div class="card card-admin">
+                        <div class="card-body text-center p-4">
+                            <div class="module-icon icon-admin">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <h5 class="card-title">Administration</h5>
+                            <p class="card-text">Gestion des utilisateurs et rôles</p>
+                            <div class="module-actions">
+                                <div class="d-grid gap-2">
+                                    <a href="/users" class="btn module-btn btn-admin">
+                                        <i class="fas fa-users"></i> Utilisateurs
+                                    </a>
+                                    <a href="/roles" class="btn module-btn btn-admin">
+                                        <i class="fas fa-user-tag"></i> Rôles
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
 
-        <!-- Module STOCK -->
-       <div sec:authorize="hasRole('STOCK')" class="col-lg-4 col-md-6 mb-4">
-            <a href="/stock/produits" class="module-card">
-                <div class="card border-primary h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-boxes fa-4x text-primary mb-3"></i>
-                        <h5 class="card-title">Gestion Stock</h5>
-                        <p class="card-text">Produits, catégories, fournisseurs</p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-1">STOCK</span>
-                        </div>
-                        <hr>
-                        <div class="d-grid gap-2">
-                            <a href="/stock/produits" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-box"></i> Produits
-                            </a>
-                            <a href="/stock/categories" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-tags"></i> Catégories
-                            </a>
-                            <a href="/stock/fournisseurs" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-truck"></i> Fournisseurs
-                            </a>
+            <!-- Module STOCK -->
+            <div sec:authorize="hasRole('STOCK')" class="col-lg-4 col-md-6">
+                <a href="/stock/produits" class="module-card">
+                    <div class="card card-stock">
+                        <div class="card-body text-center p-4">
+                            <div class="module-icon icon-stock">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                            <h5 class="card-title">Gestion Stock</h5>
+                            <p class="card-text">Produits, catégories, fournisseurs</p>
+                            <span class="module-badge badge-stock-custom">STOCK</span>
+                            <div class="module-actions">
+                                <div class="d-grid gap-2">
+                                    <a href="/stock/produits" class="btn module-btn btn-stock">
+                                        <i class="fas fa-box"></i> Produits
+                                    </a>
+                                    <a href="/stock/categories" class="btn module-btn btn-stock">
+                                        <i class="fas fa-tags"></i> Catégories
+                                    </a>
+                                    <a href="/stock/fournisseurs" class="btn module-btn btn-stock">
+                                        <i class="fas fa-truck"></i> Fournisseurs
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
 
-        <!-- Module VENTE -->
-        <div sec:authorize="hasRole('VENTE')" class="col-lg-4 col-md-6 mb-4">
-            <a href="#" class="module-card">
-                <div class="card border-success h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-shopping-cart fa-4x text-success mb-3"></i>
-                        <h5 class="card-title">Gestion Ventes</h5>
-                        <p class="card-text">Commandes, ventes, clients</p>
-                        <div class="mt-3">
-                            <span class="badge bg-success me-1">VENTE</span>
-                        </div>
-                        <hr>
-                        <div class="d-grid gap-2">
-                            <a href="#" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-shopping-bag"></i> Ventes
-                            </a>
-                            <a href="#" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-file-invoice"></i> Commandes
-                            </a>
-                            <a href="#" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-users"></i> Clients
-                            </a>
+            <!-- Module VENTE -->
+            <div sec:authorize="hasRole('VENTE')" class="col-lg-4 col-md-6">
+                <a href="#" class="module-card">
+                    <div class="card card-vente">
+                        <div class="card-body text-center p-4">
+                            <div class="module-icon icon-vente">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <h5 class="card-title">Gestion Ventes</h5>
+                            <p class="card-text">Commandes, ventes, clients</p>
+                            <span class="module-badge badge-vente-custom">VENTE</span>
+                            <div class="module-actions">
+                                <div class="d-grid gap-2">
+                                    <a href="#" class="btn module-btn btn-vente">
+                                        <i class="fas fa-shopping-bag"></i> Ventes
+                                    </a>
+                                    <a href="#" class="btn module-btn btn-vente">
+                                        <i class="fas fa-file-invoice"></i> Commandes
+                                    </a>
+                                    <a href="#" class="btn module-btn btn-vente">
+                                        <i class="fas fa-users"></i> Clients
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <!-- Informations utilisateur -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card border-info">
-                <div class="card-header bg-info text-white">
-                    <i class="fas fa-id-badge"></i> Informations de session
-                </div>
-                <div class="card-body">
-                    <p><strong>Email :</strong> <span th:text="${username}"></span></p>
-                    <p><strong>Rôles actifs :</strong></p>
-                    <div>
-                        <span th:each="role : ${roles}"
-                              class="badge me-2"
-                              th:classappend="${role.authority == 'ROLE_ADMIN'} ? 'bg-danger' :
-                                             (${role.authority == 'ROLE_STOCK'} ? 'bg-primary' : 'bg-success')"
-                              th:text="${role.authority}"></span>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Pied de page -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <footer class="text-center text-muted">
-                <hr>
-                <p class="mb-0">
-                    <i class="fas fa-copyright"></i> 2025 NovaERP - Système de gestion intégré
-                </p>
-            </footer>
+    <!-- Informations utilisateur -->
+    <div class="user-info-section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card user-info-card">
+                    <div class="user-info-header">
+                        <i class="fas fa-id-badge me-2"></i> Informations de session
+                    </div>
+                    <div class="user-info-body">
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-content">
+                                <strong>Email</strong>
+                                <span th:text="${username}"></span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <strong>Rôles actifs</strong>
+                                <div class="mt-2">
+                                    <span th:each="role : ${roles}"
+                                          class="role-badge"
+                                          th:classappend="${role.authority == 'ROLE_ADMIN'} ? 'bg-danger' :
+                                                         (${role.authority == 'ROLE_STOCK'} ? 'bg-primary' : 'bg-success')"
+                                          th:text="${role.authority}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="dashboard-footer">
+            <p>
+                <i class="fas fa-copyright me-2"></i>2025 NovaERP - Système de gestion intégré
+            </p>
         </div>
     </div>
 </div>
