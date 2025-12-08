@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Extraction automatique facture - OCR Groq</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1em;
+        }
+        .container { 
+            max-width: 1900px; 
+            margin: auto; 
+            background: #fff; 
+            border-radius: 12px; 
+            padding: 1.5em; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1em;
+            padding-bottom: 1em;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        h1 { 
+            color: #333; 
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .upload-section {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+        }
+        .result { 
+            display: grid;
+            grid-template-columns: 900px 1fr;
+            gap: 1.5em; 
+            margin-top: 1em;
+            height: calc(100vh - 180px);
+        }
+        .result-section {
+            background: #f8f9fa;
+            padding: 1em;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+        .result-section h3 {
+            margin: 0 0 0.8em 0;
+            color: #333;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        .image-container {
+            position: relative;
+            flex: 1;
+            overflow: auto;
+            background: #000;
+            border-radius: 8px;
+        }
+        .result img { 
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .json-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .json-editor { 
+            background: #2d2d2d; 
+            color: #f8f8f2;
+            padding: 1.2em; 
+            border-radius: 8px; 
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            overflow: auto;
+            border: 2px solid #444;
+            resize: none;
+            width: 100%;
+            white-space: pre;
+            flex: 1;
+            min-height: 0;
+        }
+        .json-editor:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .json-actions {
+            display: flex;
+            gap: 0.6em;
+            margin-top: 0.8em;
+            flex-wrap: wrap;
+        }
+        .error { 
+            color: #dc3545; 
+            background: #f8d7da;
+            padding: 0.8em;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+            margin: 1em 0;
+            font-size: 0.95em;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 0.8em 1.2em;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.95em;
+        }
+        .btn { 
+            display: inline-block; 
+            background: #667eea; 
+            color: white; 
+            padding: 0.6em 1.4em; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 0.95em; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: all .2s; 
+            text-decoration: none;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .btn:hover { 
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { 
+            background: #218838;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { 
+            background: #5a6268;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+        .btn-icon {
+            padding: 0.5em 0.9em;
+            font-size: 0.8em;
+        }
+        input[type="file"] { display: none; }
+        .file-chosen {
+            color: #666;
+            font-size: 0.9em;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        @media (max-width: 1600px) {
+            .result {
+                grid-template-columns: 800px 1fr;
+            }
+        }
+        @media (max-width: 1400px) {
+            .result {
+                grid-template-columns: 700px 1fr;
+            }
+        }
+        @media (max-width: 1024px) {
+            .result {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .result-section {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧾 Extraction Facture OCR</h1>
+            <div class="upload-section">
+                <form method="POST" enctype="multipart/form-data" id="uploadForm" style="display:flex;align-items:center;gap:1em;">
+                    <input type="file" name="image" accept="image/*" id="fileInput" required>
+                    <label for="fileInput" class="btn">📤 Choisir</label>
+                    <span id="file-chosen" class="file-chosen"></span>
+                    <button type="submit" class="btn btn-success" style="display:none;" id="submitBtn">🔍 Analyser</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="successMessage" class="success">✅ JSON copié !</div>
+
+        {% if error %}
+            <div class="error">❌ {{ error }}</div>
+        {% endif %}
+
+        {% if raw_json %}
+        <div class="result">
+            <!-- Affichage de l'image téléchargée -->
+            <div class="result-section">
+                <h3>📷 Facture</h3>
+                <div class="image-container">
+                    <img src="{{ image_url }}" alt="Facture" id="invoiceImage">
+                </div>
+            </div>
+            
+            <!-- Affichage du JSON extrait -->
+            <div class="result-section">
+                <h3>📝 JSON Extrait</h3>
+                <div class="json-container">
+                    <textarea id="jsonEditor" class="json-editor" spellcheck="false">{{ raw_json }}</textarea>
+                    <div class="json-actions">
+                        <button class="btn btn-secondary btn-icon" onclick="copyJSON()">📋 Copier</button>
+                        <button class="btn btn-secondary btn-icon" onclick="formatJSON()">✨ Formater</button>
+                        <button class="btn btn-secondary btn-icon" onclick="compactJSON()">⚡ Compacter</button>
+                        <button class="btn btn-secondary btn-icon" onclick="downloadJSON()">💾 Télécharger</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const fileChosen = document.getElementById('file-chosen');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Auto-format JSON on load
+        window.addEventListener('DOMContentLoaded', function() {
+            const editor = document.getElementById('jsonEditor');
+            if (editor && editor.value) {
+                try {
+                    const json = JSON.parse(editor.value);
+                    editor.value = JSON.stringify(json, null, 2);
+                } catch (e) {
+                    console.log('JSON already formatted or invalid');
+                }
+            }
+        });
+        
+        fileInput.addEventListener('change', function(){
+            if(fileInput.files.length > 0){
+                fileChosen.textContent = fileInput.files[0].name;
+                submitBtn.style.display = 'inline-block';
+            } else {
+                fileChosen.textContent = '';
+                submitBtn.style.display = 'none';
+            }
+        });
+
+        function copyJSON() {
+            const editor = document.getElementById('jsonEditor');
+            editor.select();
+            editor.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showSuccess();
+        }
+
+        function formatJSON() {
+            const editor = document.getElementById('jsonEditor');
+            try {
+                const json = JSON.parse(editor.value);
+                editor.value = JSON.stringify(json, null, 2);
+            } catch (e) {
+                alert('❌ JSON invalide');
+            }
+        }
+
+        function compactJSON() {
+            const editor = document.getElementById('jsonEditor');
+            try {
+                const json = JSON.parse(editor.value);
+                editor.value = JSON.stringify(json);
+            } catch (e) {
+                alert('❌ JSON invalide');
+            }
+        }
+
+        function downloadJSON() {
+            const editor = document.getElementById('jsonEditor');
+            const blob = new Blob([editor.value], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'facture_' + new Date().getTime() + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showSuccess() {
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
