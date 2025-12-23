@@ -1,5 +1,6 @@
 package com.novaerp.demo.controller;
 
+import com.novaerp.demo.model.dto.FournisseurSearchCriteria;
 import com.novaerp.demo.model.entity.Fournisseur;
 import com.novaerp.demo.service.FournisseurService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ public class FournisseurController {
     private final FournisseurService fournisseurService;
 
     @GetMapping
-    public String listFournisseurs(Model model) {
-        model.addAttribute("fournisseurs", fournisseurService.findAll());
+    public String listFournisseurs(@ModelAttribute("searchCriteria") FournisseurSearchCriteria criteria, Model model) {
+        model.addAttribute("fournisseurs", fournisseurService.search(criteria));
+        model.addAttribute("searchCriteria", criteria != null ? criteria : new FournisseurSearchCriteria());
         return "stock/fournisseurs/list";
     }
 
@@ -48,23 +50,29 @@ public class FournisseurController {
     public String saveFournisseur(@Valid @ModelAttribute Fournisseur fournisseur,
                                   BindingResult result,
                                   Authentication auth,
-                                  RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes,
+                                  Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("fournisseur", fournisseur);
             return "stock/fournisseurs/form";
         }
 
-        fournisseurService.save(fournisseur, auth.getName());
-        redirectAttributes.addFlashAttribute("successMessage", "Fournisseur enregistré avec succès");
+        try {
+            fournisseurService.save(fournisseur, auth.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Fournisseur enregistré avec succès");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de l'enregistrement : " + e.getMessage());
+        }
         return "redirect:/stock/fournisseurs";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteFournisseur(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             fournisseurService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Fournisseur supprimé avec succès");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression : " + e.getMessage());
         }
         return "redirect:/stock/fournisseurs";
     }

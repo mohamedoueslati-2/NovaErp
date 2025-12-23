@@ -1,7 +1,6 @@
 package com.novaerp.demo.controller;
 
 import com.novaerp.demo.model.entity.User;
-import com.novaerp.demo.model.typologie.RoleTypologie;
 import com.novaerp.demo.service.RoleService;
 import com.novaerp.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -22,7 +21,6 @@ public class UserController {
     private final UserService userService;
     private final RoleService roleService;
 
-    // Liste des utilisateurs - ADMIN uniquement
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public String listUsers(Model model) {
@@ -30,7 +28,6 @@ public class UserController {
         return "users/list";
     }
 
-    // Afficher formulaire de création - ADMIN uniquement
     @GetMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
     public String showCreateForm(Model model) {
@@ -39,7 +36,6 @@ public class UserController {
         return "users/form";
     }
 
-    // Créer un utilisateur - ADMIN uniquement
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public String createUser(@Valid @ModelAttribute User user,
@@ -56,22 +52,40 @@ public class UserController {
             redirectAttributes.addFlashAttribute("success", "Utilisateur créé avec succès");
             return "redirect:/users";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Erreur lors de la création : " + e.getMessage());
             model.addAttribute("roles", roleService.findAll());
             return "users/form";
         }
     }
 
-    // Afficher formulaire de modification - ADMIN uniquement
     @GetMapping("/{id}/edit")
     @PreAuthorize("hasRole('ADMIN')")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userService.findById(id));
-        model.addAttribute("roles", roleService.findAll());
-        return "users/form";
+    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("user", userService.findById(id));
+            model.addAttribute("roles", roleService.findAll());
+            return "users/form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Utilisateur non trouvé");
+            return "redirect:/users";
+        }
     }
 
-    // Mettre à jour un utilisateur - ADMIN uniquement
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String viewUser(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.findById(id);
+            model.addAttribute("user", user);
+            model.addAttribute("categories", userService.getCategoriesByUser(id));
+            model.addAttribute("fournisseurs", userService.getFournisseursByUser(id));
+            return "users/view";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Utilisateur non trouvé");
+            return "redirect:/users";
+        }
+    }
+
     @PostMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String updateUser(@PathVariable Long id,
@@ -89,13 +103,12 @@ public class UserController {
             redirectAttributes.addFlashAttribute("success", "Utilisateur modifié avec succès");
             return "redirect:/users";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Erreur lors de la modification : " + e.getMessage());
             model.addAttribute("roles", roleService.findAll());
             return "users/form";
         }
     }
 
-    // Supprimer un utilisateur - ADMIN uniquement
     @PostMapping("/{id}/delete")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
@@ -103,21 +116,25 @@ public class UserController {
             userService.delete(id);
             redirectAttributes.addFlashAttribute("success", "Utilisateur supprimé avec succès");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression : " + e.getMessage());
         }
         return "redirect:/users";
     }
 
-    // Consulter son propre profil - Tous les utilisateurs
     @GetMapping("/profile")
     public String viewProfile(Model model, Authentication auth) {
-        User user = userService.findByEmail(auth.getName());
-        model.addAttribute("user", user);
-        return "users/profile";
+        try {
+            User user = userService.findByEmail(auth.getName());
+            model.addAttribute("user", user);
+            model.addAttribute("categories", userService.getCategoriesByUser(user.getId()));
+            model.addAttribute("fournisseurs", userService.getFournisseursByUser(user.getId()));
+            return "users/profile";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement du profil");
+            return "error";
+        }
     }
 
-    // Modifier son propre profil - Tous les utilisateurs
-    // Modifier son propre profil - Tous les utilisateurs
     @PostMapping("/profile")
     public String updateProfile(@Valid @ModelAttribute User user,
                                 BindingResult result,
@@ -125,23 +142,19 @@ public class UserController {
                                 RedirectAttributes redirectAttributes,
                                 Model model) {
         if (result.hasErrors()) {
-            // Recharger l'utilisateur pour afficher les rôles
             User currentUser = userService.findByEmail(auth.getName());
             model.addAttribute("user", currentUser);
             return "users/profile";
         }
 
         try {
-            // Récupérer l'utilisateur actuel et préserver ses rôles
             User currentUser = userService.findByEmail(auth.getName());
             user.setRoles(currentUser.getRoles());
-
             userService.updateProfile(auth.getName(), user);
             redirectAttributes.addFlashAttribute("success", "Profil mis à jour avec succès");
             return "redirect:/users/profile";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            // Recharger l'utilisateur pour afficher les rôles
+            model.addAttribute("error", "Erreur lors de la mise à jour : " + e.getMessage());
             User currentUser = userService.findByEmail(auth.getName());
             model.addAttribute("user", currentUser);
             return "users/profile";

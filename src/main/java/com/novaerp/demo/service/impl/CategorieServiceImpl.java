@@ -32,11 +32,17 @@ public class CategorieServiceImpl implements CategorieService {
     @Override
     @Transactional
     public Categorie save(Categorie categorie, String currentUserEmail) {
+        User currentUser = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
         if (categorie.getId() == null) {
-            User createdBy = userRepository.findByEmail(currentUserEmail)
-                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-            categorie.setCreatedBy(createdBy);
+            // Création
+            categorie.setCreatedBy(currentUser);
+        } else {
+            // Mise à jour
+            categorie.setUpdatedBy(currentUser);
         }
+
         return categorieRepository.save(categorie);
     }
 
@@ -47,5 +53,10 @@ public class CategorieServiceImpl implements CategorieService {
             throw new RuntimeException("Catégorie non trouvée avec l'ID : " + id);
         }
         categorieRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Categorie> findByCreatedById(Long userId) {
+        return categorieRepository.findByCreatedById(userId);
     }
 }

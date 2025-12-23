@@ -1,8 +1,12 @@
 package com.novaerp.demo.service.impl;
 
+import com.novaerp.demo.model.entity.Categorie;
+import com.novaerp.demo.model.entity.Fournisseur;
 import com.novaerp.demo.model.entity.Role;
 import com.novaerp.demo.model.entity.User;
 import com.novaerp.demo.model.typologie.RoleTypologie;
+import com.novaerp.demo.repository.CategorieRepository;
+import com.novaerp.demo.repository.FournisseurRepository;
 import com.novaerp.demo.repository.RoleRepository;
 import com.novaerp.demo.repository.UserRepository;
 import com.novaerp.demo.service.UserService;
@@ -22,6 +26,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CategorieRepository categorieRepository;
+    private final FournisseurRepository fournisseurRepository;
 
     @Override
     public List<User> findAll() {
@@ -113,7 +119,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setNom(updatedUser.getNom());
         existingUser.setPrenom(updatedUser.getPrenom());
 
-        // Vérifier si l'email a changé
         if (updatedUser.getEmail() != null && !existingUser.getEmail().equals(updatedUser.getEmail())) {
             if (existsByEmail(updatedUser.getEmail())) {
                 throw new RuntimeException("Un utilisateur avec cet email existe déjà: " + updatedUser.getEmail());
@@ -121,7 +126,6 @@ public class UserServiceImpl implements UserService {
             existingUser.setEmail(updatedUser.getEmail());
         }
 
-        // Encoder le mot de passe uniquement s'il est fourni
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
@@ -166,5 +170,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+
+
+    @Override
+    public List<Categorie> getCategoriesByUser(Long userId) {
+        return categorieRepository.findByCreatedById(userId);
+    }
+
+    @Override
+    public List<Fournisseur> getFournisseursByUser(Long userId) {
+        return fournisseurRepository.findByCreatedById(userId);
     }
 }

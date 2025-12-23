@@ -3,208 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Nova ERP</title>
+    <title>Connexion - NovaERP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        :root[data-theme="light"] {
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+            --primary: #0a0a0a;
+            --primary-foreground: #fafafa;
+            --secondary: #f4f4f5;
+            --secondary-foreground: #0a0a0a;
+            --muted: #f4f4f5;
+            --muted-foreground: #71717a;
+            --accent: #f4f4f5;
+            --accent-foreground: #0a0a0a;
+            --border: #e4e4e7;
+            --input: #e4e4e7;
+            --ring: #0a0a0a;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gradient-start: #f8fafc;
+            --gradient-end: #f1f5f9;
+        }
+
+        :root[data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --card: #0a0a0a;
+            --card-foreground: #fafafa;
+            --primary: #fafafa;
+            --primary-foreground: #0a0a0a;
+            --secondary: #27272a;
+            --secondary-foreground: #fafafa;
+            --muted: #27272a;
+            --muted-foreground: #a1a1aa;
+            --accent: #27272a;
+            --accent-foreground: #fafafa;
+            --border: #27272a;
+            --input: #27272a;
+            --ring: #d4d4d8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gradient-start: #18181b;
+            --gradient-end: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            color: var(--foreground);
             min-height: 100vh;
             display: flex;
             align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+            padding: 1rem;
         }
 
-        .login-container {
-            max-width: 450px;
-            margin: auto;
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(10, 10, 10, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: float 20s ease-in-out infinite;
         }
 
-        .login-card {
-            border: none;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
         }
 
-        .card-header-custom {
-            background: var(--primary-gradient);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            border: none;
+        .container {
+            width: 100%;
+            max-width: 1140px;
+            padding: 0;
+            position: relative;
+            z-index: 1;
         }
 
-        .logo-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+        .login-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            min-height: calc(100vh - 2rem);
+            padding: 1.5rem 0;
+        }
+
+        .login-hero {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-right: 1rem;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
-            backdrop-filter: blur(10px);
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .logo-icon i {
-            font-size: 2.5rem;
-            color: white;
+        .brand-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-foreground);
         }
 
-        .card-header-custom h3 {
-            color: white;
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.8rem;
+        .brand-name {
+            font-size: 1.375rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
-        .card-header-custom p {
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0.5rem 0 0;
-            font-size: 0.95rem;
+        .login-hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--foreground) 0%, var(--muted-foreground) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .card-body-custom {
-            padding: 2.5rem 2rem;
+        .login-hero p {
+            font-size: 1.0625rem;
+            color: var(--muted-foreground);
+            line-height: 1.6;
         }
 
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .input-group-custom {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group-custom i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            z-index: 10;
-        }
-
-        .form-control-custom {
-            padding: 0.85rem 1rem 0.85rem 2.8rem;
-            border: 2px solid #e0e6ed;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control-custom:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
-            outline: none;
-        }
-
-        .btn-login {
-            background: var(--primary-gradient);
-            border: none;
-            padding: 0.9rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
-        }
-
-        .alert-custom {
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .alert-custom i {
-            margin-right: 0.75rem;
-            font-size: 1.2rem;
-        }
-
-        .alert-danger-custom {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-        }
-
-        .alert-success-custom {
-            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
-            color: white;
-        }
-
-        .alert-warning-custom {
-            background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
-            color: #495057;
-        }
-
-        .test-accounts {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 12px;
-            padding: 1.25rem;
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.875rem;
             margin-top: 1.5rem;
         }
 
-        .test-accounts-title {
-            font-weight: 700;
-            color: #495057;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
+        .feature-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.875rem;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--foreground);
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            background: var(--muted);
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            color: var(--foreground);
         }
 
-        .test-accounts-title i {
-            margin-right: 0.5rem;
-            color: #667eea;
-        }
-
-        .account-item {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0;
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .account-item i {
-            margin-right: 0.5rem;
-            color: #667eea;
-            width: 16px;
-        }
-
-        .account-badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+        .feature-content h3 {
+            font-size: 0.875rem;
             font-weight: 600;
-            margin-right: 0.5rem;
+            margin-bottom: 0.125rem;
+            color: var(--foreground);
         }
 
-        .badge-admin { background: #ff6b6b; color: white; }
-        .badge-stock { background: #667eea; color: white; }
-        .badge-vente { background: #51cf66; color: white; }
+        .feature-content p {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            line-height: 1.4;
+        }
+
+        .login-form-container {
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: -3rem;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--foreground);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .login-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* MODIFICATION 1: Icône à côté de Connexion */
+        .login-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .login-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .login-icon {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .login-header p {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+        }
+
+        .alert-custom {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .alert-danger-custom {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        .alert-success-custom {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .alert-warning-custom {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+
+        /* MODIFICATION 2: Champs sur la même ligne */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 0.875rem 0.75rem 2.75rem;
+            font-size: 0.875rem;
+            border: 2px solid var(--input);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--foreground);
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08);
+        }
+
+        .form-input:focus + .input-icon {
+            color: var(--foreground);
+        }
+
+        :root[data-theme="dark"] .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(250, 250, 250, 0.08);
+        }
+
+        .form-input::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--primary-foreground);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
         .divider {
             display: flex;
@@ -217,115 +416,333 @@
         .divider::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--border);
         }
 
         .divider span {
             padding: 0 1rem;
-            color: #adb5bd;
-            font-size: 0.85rem;
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .demo-accounts {
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--muted);
+        }
+
+        .demo-accounts-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.875rem;
+        }
+
+        .demo-accounts-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--foreground);
+        }
+
+        .demo-account {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0.875rem;
+            margin-bottom: 0.5rem;
+            border-radius: 7px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .demo-account:last-child {
+            margin-bottom: 0;
+        }
+
+        .demo-account:hover {
+            border-color: var(--foreground);
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .demo-account-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .demo-badge {
+            padding: 0.1875rem 0.625rem;
+            border-radius: 5px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-admin {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-stock {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .badge-vente {
+            background: var(--success);
+            color: white;
+        }
+
+        .demo-credentials {
+            color: var(--foreground);
             font-weight: 500;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        .demo-copy-icon {
+            color: var(--muted-foreground);
+            font-size: 0.8125rem;
+            transition: color 0.2s;
+        }
+
+        .demo-account:hover .demo-copy-icon {
+            color: var(--foreground);
+        }
+
+        @media (max-width: 968px) {
+            .login-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .login-hero {
+                text-align: center;
+                padding-right: 0;
+            }
+
+            .brand-container {
+                justify-content: center;
+            }
+
+            .login-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-form-container {
+                padding-left: 0;
             }
         }
 
-        .login-card {
-            animation: fadeInUp 0.6s ease;
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .login-card {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .login-hero h1 {
+                font-size: 1.875rem;
+            }
+
+            .theme-toggle {
+                top: -2.5rem;
+            }
+
+            .features-grid {
+                gap: 0.625rem;
+            }
+
+            .feature-card {
+                padding: 0.875rem;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12 login-container">
-            <div class="card login-card">
-                <div class="card-header-custom">
-                    <div class="logo-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Nova ERP</h3>
-                    <p>Système de gestion intégré</p>
+    <div class="login-wrapper">
+        <div class="login-hero">
+            <div class="brand-container">
+                <div class="brand-icon">
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                <div class="card-body card-body-custom">
-                    <div th:if="${param.error}" class="alert-custom alert-danger-custom">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>Email ou mot de passe invalide</span>
-                    </div>
-                    <div th:if="${param.logout}" class="alert-custom alert-success-custom">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Vous avez été déconnecté avec succès</span>
-                    </div>
-                    <div th:if="${param.expired}" class="alert-custom alert-warning-custom">
-                        <i class="fas fa-clock"></i>
-                        <span>Votre session a expiré</span>
-                    </div>
+                <div class="brand-name">NovaERP</div>
+            </div>
 
-                    <form th:action="@{/login}" method="post">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i> Adresse email
-                            </label>
-                            <div class="input-group-custom">
-                                <i class="fas fa-user"></i>
-                                <input type="email" class="form-control form-control-custom"
-                                       id="email" name="email"
-                                       placeholder="votre@email.com"
-                                       required autofocus>
+            <h1>Bienvenue sur votre plateforme</h1>
+            <p>Système de gestion d'entreprise complet et intégré. Gérez votre stock, vos ventes et votre équipe en toute simplicité.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Gestion de stock</h3>
+                        <p>Suivez vos inventaires en temps réel</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Ventes & Analytics</h3>
+                        <p>Analysez vos performances</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Gestion d'équipe</h3>
+                        <p>Gérez les rôles et permissions</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Sécurisé</h3>
+                        <p>Vos données sont protégées</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-form-container">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+
+            <div class="login-card">
+                <div class="login-header">
+                    <!-- MODIFICATION 1: Icône à côté de "Connexion" -->
+                    <div class="login-title-container">
+                        <i class="fas fa-sign-in-alt login-icon"></i>
+                        <h2>Connexion</h2>
+                    </div>
+                    <p>Entrez vos identifiants pour accéder</p>
+                </div>
+
+                <div th:if="${param.error}" class="alert-custom alert-danger-custom">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Email ou mot de passe invalide</span>
+                </div>
+                <div th:if="${param.logout}" class="alert-custom alert-success-custom">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Déconnexion réussie</span>
+                </div>
+                <div th:if="${param.expired}" class="alert-custom alert-warning-custom">
+                    <i class="fas fa-clock"></i>
+                    <span>Session expirée</span>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <!-- MODIFICATION 2: Champs Email et Mot de passe sur la même ligne -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-wrapper">
+                                <input type="email" class="form-input" id="email" name="email"
+                                       placeholder="votre@email.com" required autofocus>
+                                <i class="fas fa-envelope input-icon"></i>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock"></i> Mot de passe
-                            </label>
-                            <div class="input-group-custom">
-                                <i class="fas fa-key"></i>
-                                <input type="password" class="form-control form-control-custom"
-                                       id="password" name="password"
-                                       placeholder="••••••••"
-                                       required>
+                        <div class="form-group">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <div class="input-wrapper">
+                                <input type="password" class="form-input" id="password" name="password"
+                                       placeholder="••••••••" required>
+                                <i class="fas fa-lock input-icon"></i>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-login btn-primary w-100">
-                            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
-                        </button>
-                    </form>
-
-                    <div class="divider">
-                        <span>Comptes de démonstration</span>
                     </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Se connecter</span>
+                    </button>
+                </form>
 
-                    <div class="test-accounts">
-                        <div class="test-accounts-title">
-                            <i class="fas fa-users"></i>
-                            Utilisateurs de test
+                <div class="divider">
+                    <span>Comptes de test</span>
+                </div>
+
+                <div class="demo-accounts">
+                    <div class="demo-accounts-header">
+                        <i class="fas fa-users"></i>
+                        <span class="demo-accounts-title">Utilisateurs de test</span>
+                    </div>
+                    <div class="demo-account">
+                        <div class="demo-account-left">
+                            <span class="demo-badge badge-admin">ADMIN</span>
+                            <span class="demo-credentials">admin@novaerp.com</span>
                         </div>
-                        <div class="account-item">
-                            <span class="account-badge badge-admin">ADMIN</span>
-                            <span><strong>admin@novaerp.com</strong> / admin123</span>
+                        <i class="fas fa-copy demo-copy-icon"></i>
+                    </div>
+                    <div class="demo-account">
+                        <div class="demo-account-left">
+                            <span class="demo-badge badge-stock">STOCK</span>
+                            <span class="demo-credentials">stock@novaerp.com</span>
                         </div>
-                        <div class="account-item">
-                            <span class="account-badge badge-stock">STOCK</span>
-                            <span><strong>stock@novaerp.com</strong> / stock123</span>
+                        <i class="fas fa-copy demo-copy-icon"></i>
+                    </div>
+                    <div class="demo-account">
+                        <div class="demo-account-left">
+                            <span class="demo-badge badge-vente">VENTE</span>
+                            <span class="demo-credentials">vente@novaerp.com</span>
                         </div>
-                        <div class="account-item">
-                            <span class="account-badge badge-vente">VENTE</span>
-                            <span><strong>vente@novaerp.com</strong> / vente123</span>
-                        </div>
+                        <i class="fas fa-copy demo-copy-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+        const currentTheme = html.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('theme-icon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+</script>
 </body>
 </html>
