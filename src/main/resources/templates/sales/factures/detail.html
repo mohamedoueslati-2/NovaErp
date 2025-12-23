@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${'Détail Facture - ' + (facture.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_CLIENT ? 'Client' : 'Fournisseur')}">Détail Facture - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-file-invoice me-2"></i>
+                Détail de la facture
+                <small class="opacity-75 ms-2" th:text="${'(' + (facture.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_CLIENT ? 'Client' : 'Fournisseur') + ')'}"></small>
+            </h5>
+            <a class="btn btn-warning btn-sm" th:href="@{/sales/factures/edit/{id}(id=${facture.id})}">
+                <i class="fas fa-edit me-1"></i> Modifier
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Informations principales -->
+            <div class="card bg-light mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between border-bottom py-2">
+                                <div><strong>Numéro</strong></div>
+                                <div th:text="${facture.numeroFactureFournisseur}">NF-001</div>
+                            </div>
+                            <div class="d-flex justify-content-between border-bottom py-2">
+                                <div><strong>Date facture</strong></div>
+                                <div th:text="${#temporals.format(facture.dateFacture, 'yyyy-MM-dd')}">2025-01-01</div>
+                            </div>
+                            <div class="d-flex justify-content-between py-2">
+                                <div><strong>Commande ID</strong></div>
+                                <div th:text="${facture.commandeId}">1001</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between border-bottom py-2">
+                                <div><strong>Montant TTC</strong></div>
+                                <div class="fw-bold text-primary" th:text="${#numbers.formatDecimal(facture.montantTTC, 1, 'POINT', 2, 'POINT')} + ' €'">0.00 €</div>
+                            </div>
+                            <div class="d-flex justify-content-between border-bottom py-2">
+                                <div><strong>Statut</strong></div>
+                                <div>
+                                    <span class="badge" th:classappend="${facture.statut} == 'PAYEE' ? 'bg-success' : 'bg-danger'"
+                                          th:text="${facture.statut}">NON_PAYEE</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between py-2">
+                                <div><strong>Type</strong></div>
+                                <div th:text="${facture.type}">FACTURE_CLIENT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attributs supplémentaires -->
+            <h6 class="mb-3"><i class="fas fa-code me-2"></i> Attributs supplémentaires (JSON)</h6>
+            <div class="card bg-light">
+                <div class="card-body">
+                    <pre class="bg-dark text-light p-3 rounded mb-0" th:text="${facture.extraAttributesJson}">{}</pre>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-4 d-flex justify-content-between">
+                <a class="btn btn-secondary" th:href="@{/sales/factures}">
+                    <i class="fas fa-arrow-left me-1"></i> Retour
+                </a>
+                <a class="btn btn-warning" th:href="@{/sales/factures/edit/{id}(id=${facture.id})}">
+                    <i class="fas fa-edit me-1"></i> Modifier
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

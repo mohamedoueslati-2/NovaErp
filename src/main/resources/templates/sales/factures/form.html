@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${'Facture - ' + (facture.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_CLIENT ? 'Client' : 'Fournisseur')}">Facture - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-file-pen me-2"></i>
+                <span th:text="${facture.id} != null ? 'Modifier la facture' : 'Nouvelle facture'"></span>
+                <small class="opacity-75 ms-2" th:text="${'(' + (facture.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_CLIENT ? 'Client' : 'Fournisseur') + ')'}"></small>
+            </h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/sales/factures/save}" th:object="${facture}" method="post" class="row g-3">
+                <input type="hidden" th:name="${_csrf != null ? _csrf.parameterName : '_csrf'}"
+                       th:value="${_csrf != null ? _csrf.token : ''}" />
+                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{type}" />
+
+                <div class="col-md-4">
+                    <label class="form-label">Numéro facture <span class="text-danger">*</span></label>
+                    <input class="form-control" th:field="*{numeroFactureFournisseur}" placeholder="NF-2025-0001" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Date facture <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" th:field="*{dateFacture}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Commande ID</label>
+                    <input type="number" class="form-control" th:field="*{commandeId}" placeholder="1001">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Montant TTC <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control" th:field="*{montantTTC}" placeholder="0.00" required>
+                        <span class="input-group-text">€</span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Statut <span class="text-danger">*</span></label>
+                    <select class="form-select" th:field="*{statut}" required>
+                        <option value="PAYEE">Payée</option>
+                        <option value="NON_PAYEE">Non payée</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Attributs supplémentaires (JSON)</label>
+                    <textarea class="form-control font-monospace" rows="6" th:field="*{extraAttributesJson}" placeholder='{"note":"...", "ref":"..."}'></textarea>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Saisissez un JSON valide. Exemple: {"note":"Urgent","refInterne":"RF-01"}
+                    </small>
+                </div>
+
+                <!-- ... -->
+                <div class="col-12 d-flex justify-content-between mt-4">
+                    <a th:href="@{/sales/factures}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </a>
+                    <a href="http://localhost:5000/?returnUrl=http://localhost:8085/dashboard?open=sales/factures"
+                       class="btn btn-outline-primary me-2">
+                        <i class="fas fa-robot me-1"></i> OCR Facture
+                    </a>
+
+
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer
+                    </button>
+                </div>
+                <!-- ... -->
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

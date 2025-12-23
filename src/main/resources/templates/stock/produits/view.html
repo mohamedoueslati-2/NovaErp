@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails Produit - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a href="/dashboard" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-home"></i> Tableau de bord
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="content" class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-eye me-2"></i>Détails du Produit
+            </h5>
+            <div>
+                <a th:href="@{/stock/produits/edit/{id}(id=${produit.id})}" class="btn btn-warning btn-sm me-2">
+                    <i class="fas fa-edit me-1"></i> Modifier
+                </a>
+                <a href="/stock/produits" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Section gauche: Informations -->
+                <div class="col-md-8">
+                    <!-- Informations générales -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Informations générales
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Référence</label>
+                                    <div class="fw-bold" th:text="${produit.reference}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Nom</label>
+                                    <div class="fw-bold" th:text="${produit.nom}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Catégorie</label>
+                                    <div>
+                                        <span th:if="${produit.categorie != null}"
+                                              class="badge bg-info"
+                                              th:text="${produit.categorie.nom}"></span>
+                                        <span th:if="${produit.categorie == null}" class="text-muted">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Fournisseur</label>
+                                    <div>
+                                        <span th:if="${produit.fournisseur != null}"
+                                              th:text="${produit.fournisseur.nom}"></span>
+                                        <span th:if="${produit.fournisseur == null}" class="text-muted">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="text-muted small">Description</label>
+                                    <div class="border rounded p-2 bg-white"
+                                         th:text="${produit.description != null ? produit.description : 'Aucune description'}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prix et Stock -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">
+                                <i class="fas fa-dollar-sign me-2"></i>Prix et Stock
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="text-muted small">Unité</label>
+                                    <div class="fw-bold" th:text="${produit.unite != null ? produit.unite : '-'}"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="text-muted small">Prix Achat</label>
+                                    <div class="fw-bold text-primary"
+                                         th:text="${produit.prixAchatParDefaut != null ? produit.prixAchatParDefaut + ' TND' : '-'}"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="text-muted small">Prix Vente</label>
+                                    <div class="fw-bold text-success"
+                                         th:text="${produit.prixVente != null ? produit.prixVente + ' TND' : '-'}"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="text-muted small">Marge</label>
+                                    <div class="fw-bold text-warning"
+                                         th:if="${produit.prixVente != null and produit.prixAchatParDefaut != null}"
+                                         th:text="${#numbers.formatDecimal(produit.prixVente - produit.prixAchatParDefaut, 1, 2) + ' TND'}"></div>
+                                    <div class="text-muted" th:if="${produit.prixVente == null or produit.prixAchatParDefaut == null}">-</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Quantité en Stock</label>
+                                    <div>
+                                        <span th:text="${produit.quantite}"
+                                              th:classappend="${produit.seuilAlerte != null and produit.quantite != null and produit.quantite <= produit.seuilAlerte} ? 'badge bg-danger fs-5' : 'badge bg-success fs-5'"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Seuil d'Alerte</label>
+                                    <div class="fw-bold" th:text="${produit.seuilAlerte != null ? produit.seuilAlerte : '-'}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section droite: Image -->
+                <div class="col-md-4">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">
+                                <i class="fas fa-image me-2"></i>Image du Produit
+                            </h6>
+                            <div class="d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                                <div th:if="${produit.imageUrl != null and !produit.imageUrl.isEmpty()}">
+                                    <img th:src="${produit.imageUrl}"
+                                         alt="Image produit"
+                                         class="img-fluid rounded shadow"
+                                         style="max-height: 400px; max-width: 100%;">
+                                </div>
+                                <div th:if="${produit.imageUrl == null or produit.imageUrl.isEmpty()}"
+                                     class="text-muted text-center">
+                                    <i class="fas fa-image fa-4x mb-3"></i>
+                                    <p>Aucune image disponible</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
