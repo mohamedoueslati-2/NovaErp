@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${'Factures - ' + (criteria.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_FOURNISSEUR ? 'Fournisseur' : 'Client')}">Factures - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-file-invoice me-2"></i>
+                <span th:text="${'Factures (' + (criteria.type == T(com.novaerp.demo.model.typologie.FactureType).FACTURE_FOURNISSEUR ? 'Fournisseur' : 'Client') + ')'}">Liste des factures</span>
+            </h5>
+            <a th:href="@{/stock/factures/new}" class="btn btn-light btn-sm">
+                <i class="fas fa-plus me-1"></i> Nouvelle facture
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Formulaire de recherche -->
+            <form th:action="@{/stock/factures}" method="get" class="mb-4">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-search me-2"></i>Recherche avancée
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- Numéro de facture -->
+                            <div class="col-md-3">
+                                <label for="numeroFacture" class="form-label">Numéro de facture</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="numeroFacture"
+                                       name="numeroFacture"
+                                       th:value="${criteria.numeroFacture}"
+                                       placeholder="Ex: NF-0001">
+                            </div>
+
+                            <!-- Date début -->
+                            <div class="col-md-3">
+                                <label for="dateDebut" class="form-label">Date début</label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="dateDebut"
+                                       name="dateDebut"
+                                       th:value="${criteria.dateDebut}">
+                            </div>
+
+                            <!-- Date fin -->
+                            <div class="col-md-3">
+                                <label for="dateFin" class="form-label">Date fin</label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="dateFin"
+                                       name="dateFin"
+                                       th:value="${criteria.dateFin}">
+                            </div>
+
+                            <!-- Statut -->
+                            <div class="col-md-3">
+                                <label for="statut" class="form-label">Statut</label>
+                                <select class="form-select" id="statut" name="statut">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="PAYEE" th:selected="${criteria.statut == 'PAYEE'}">Payée</option>
+                                    <option value="NON_PAYEE" th:selected="${criteria.statut == 'NON_PAYEE'}">Non payée</option>
+                                </select>
+                            </div>
+
+                            <!-- Commande ID -->
+                            <div class="col-md-3">
+                                <label for="commandeId" class="form-label">ID Commande</label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="commandeId"
+                                       name="commandeId"
+                                       th:value="${criteria.commandeId}"
+                                       placeholder="Ex: 1001">
+                            </div>
+
+                            <!-- Boutons -->
+                            <div class="col-md-9 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-search me-1"></i>Rechercher
+                                </button>
+                                <a th:href="@{/stock/factures}" class="btn btn-secondary">
+                                    <i class="fas fa-redo me-1"></i>Réinitialiser
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Filtres actifs -->
+            <div class="mb-3" th:if="${criteria.numeroFacture != null or criteria.dateDebut != null or criteria.dateFin != null or criteria.statut != null or criteria.commandeId != null}">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-secondary" th:if="${criteria.numeroFacture != null and !#strings.isEmpty(criteria.numeroFacture)}">
+                        Numéro: <span th:text="${criteria.numeroFacture}"></span>
+                        <a th:href="@{/stock/factures(dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}"
+                           class="text-white ms-1 text-decoration-none">×</a>
+                    </span>
+                    <span class="badge bg-secondary" th:if="${criteria.dateDebut != null}">
+                        Date début: <span th:text="${#temporals.format(criteria.dateDebut, 'dd/MM/yyyy')}"></span>
+                        <a th:href="@{/stock/factures(numeroFacture=${criteria.numeroFacture}, dateFin=${criteria.dateFin}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}"
+                           class="text-white ms-1 text-decoration-none">×</a>
+                    </span>
+                    <span class="badge bg-secondary" th:if="${criteria.dateFin != null}">
+                        Date fin: <span th:text="${#temporals.format(criteria.dateFin, 'dd/MM/yyyy')}"></span>
+                        <a th:href="@{/stock/factures(numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}"
+                           class="text-white ms-1 text-decoration-none">×</a>
+                    </span>
+                    <span class="badge bg-secondary" th:if="${criteria.statut != null and !#strings.isEmpty(criteria.statut)}">
+                        Statut: <span th:text="${criteria.statut}"></span>
+                        <a th:href="@{/stock/factures(numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, commandeId=${criteria.commandeId})}"
+                           class="text-white ms-1 text-decoration-none">×</a>
+                    </span>
+                    <span class="badge bg-secondary" th:if="${criteria.commandeId != null}">
+                        Commande: <span th:text="${criteria.commandeId}"></span>
+                        <a th:href="@{/stock/factures(numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, statut=${criteria.statut})}"
+                           class="text-white ms-1 text-decoration-none">×</a>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Message résultats -->
+            <div class="alert alert-info mb-3" th:if="${totalItems != null and totalItems > 0}">
+                <i class="fas fa-info-circle me-2"></i>
+                <span th:text="${totalItems} + ' facture(s) trouvée(s)'">0 facture(s) trouvée(s)</span>
+            </div>
+
+            <!-- Tableau -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Numéro</th>
+                        <th>Date</th>
+                        <th>Commande</th>
+                        <th>Montant TTC</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(factures)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                            <p class="mb-0">Aucune facture trouvée</p>
+                        </td>
+                    </tr>
+                    <tr th:each="f, iStat : ${factures}">
+                        <td th:text="${(currentPage * pageSize) + iStat.index + 1}">1</td>
+                        <td><strong th:text="${f.numeroFactureFournisseur}">NF-0001</strong></td>
+                        <td th:text="${#temporals.format(f.dateFacture, 'dd/MM/yyyy')}">01/01/2025</td>
+                        <td th:text="'Commande #' + ${f.commandeId}">Commande #1001</td>
+                        <td><strong th:text="${#numbers.formatDecimal(f.montantTTC, 1, 'POINT', 2, 'POINT')} + ' €'">0.00 €</strong></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${f.statut == 'PAYEE' ? 'bg-success' : 'bg-danger'}"
+                                  th:text="${f.statut}">PAYEE</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm float-end">
+                                <a class="btn btn-info"
+                                   th:href="@{/stock/factures/detail/{id}(id=${f.id})}"
+                                   title="Voir détails">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a class="btn btn-warning"
+                                   th:href="@{/stock/factures/edit/{id}(id=${f.id})}"
+                                   title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form th:action="@{/stock/factures/delete/{id}(id=${f.id})}"
+                                      method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette facture ?');">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}" class="mt-4">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                        <a class="page-link"
+                           th:href="@{/stock/factures(page=${currentPage - 1}, size=${pageSize}, numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}">
+                            <i class="fas fa-chevron-left"></i> Précédent
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:each="p : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${p == currentPage ? 'active' : ''}">
+                        <a class="page-link"
+                           th:text="${p + 1}"
+                           th:href="@{/stock/factures(page=${p}, size=${pageSize}, numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages ? 'disabled' : ''}">
+                        <a class="page-link"
+                           th:href="@{/stock/factures(page=${currentPage + 1}, size=${pageSize}, numeroFacture=${criteria.numeroFacture}, dateDebut=${criteria.dateDebut}, dateFin=${criteria.dateFin}, statut=${criteria.statut}, commandeId=${criteria.commandeId})}">
+                            Suivant <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

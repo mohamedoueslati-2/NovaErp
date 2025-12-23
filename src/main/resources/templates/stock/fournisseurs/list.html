@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Fournisseurs - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-truck me-2"></i>
+                Gestion des Fournisseurs
+            </h5>
+            <a href="/stock/fournisseurs/new" class="btn btn-light btn-sm">
+                <i class="fas fa-plus me-1"></i> Nouveau Fournisseur
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Formulaire de recherche -->
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-search me-2"></i>Recherche</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/stock/fournisseurs}" method="get" th:object="${searchCriteria}">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="code" class="form-label">Code</label>
+                                <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Code fournisseur">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="nom" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" placeholder="Nom du fournisseur">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="email" th:field="*{email}" placeholder="Email">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="text" class="form-control" id="telephone" th:field="*{telephone}" placeholder="Téléphone">
+                            </div>
+                            <div class="col-md-9">
+                                <label for="adresse" class="form-label">Adresse</label>
+                                <input type="text" class="form-control" id="adresse" th:field="*{adresse}" placeholder="Adresse">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-1"></i> Rechercher
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <a th:href="@{/stock/fournisseurs}" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-redo me-1"></i> Réinitialiser
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tableau -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Adresse</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${fournisseurs.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                            <p class="mb-0">Aucun fournisseur trouvé</p>
+                        </td>
+                    </tr>
+                    <tr th:each="fournisseur : ${fournisseurs}">
+                        <td><strong th:text="${fournisseur.code}"></strong></td>
+                        <td th:text="${fournisseur.nom}"></td>
+                        <td th:text="${fournisseur.email}"></td>
+                        <td th:text="${fournisseur.telephone}"></td>
+                        <td th:text="${fournisseur.adresse}"></td>
+                        <td>
+                            <div class="btn-group btn-group-sm float-end">
+                                <a th:href="@{/stock/fournisseurs/edit/{id}(id=${fournisseur.id})}"
+                                   class="btn btn-warning"
+                                   title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form th:action="@{/stock/fournisseurs/delete/{id}(id=${fournisseur.id})}"
+                                      method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?');">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

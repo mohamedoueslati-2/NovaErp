@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire Produit - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-chart-line"></i> NovaERP
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a href="/dashboard" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-home"></i> Tableau de bord
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="content" class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-box me-2"></i>
+                <span th:text="${produit.id != null ? 'Modifier le produit' : 'Nouveau produit'}"></span>
+            </h5>
+            <a href="/stock/produits" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+            </a>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/stock/produits/save}" method="post" th:object="${produit}" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3"><i class="fas fa-info-circle me-2"></i>Informations générales</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Référence *</label>
+                                <input type="text" th:field="*{reference}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('reference')} ? 'is-invalid'"
+                                       placeholder="Ex: REF001" required>
+                                <div class="invalid-feedback" th:errors="*{reference}"
+                                     th:if="${#fields.hasErrors('reference')}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nom *</label>
+                                <input type="text" th:field="*{nom}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid'"
+                                       placeholder="Ex: Produit A" required>
+                                <div class="invalid-feedback" th:errors="*{nom}"
+                                     th:if="${#fields.hasErrors('nom')}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Catégorie</label>
+                                <select th:field="*{categorie.id}" class="form-select">
+                                    <option th:value="${null}">-- Sélectionner --</option>
+                                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.nom}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fournisseur</label>
+                                <select th:field="*{fournisseur.id}" class="form-select">
+                                    <option th:value="${null}">-- Sélectionner --</option>
+                                    <option th:each="f : ${fournisseurs}" th:value="${f.id}" th:text="${f.nom}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea th:field="*{description}" rows="3" class="form-control"
+                                          th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
+                                          placeholder="Description détaillée du produit..."></textarea>
+                                <div class="invalid-feedback" th:errors="*{description}"
+                                     th:if="${#fields.hasErrors('description')}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3"><i class="fas fa-dollar-sign me-2"></i>Prix et quantités</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Unité</label>
+                                <input type="text" th:field="*{unite}" class="form-control"
+                                       placeholder="pcs, kg, L...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Prix Achat</label>
+                                <input type="number" step="0.01" th:field="*{prixAchatParDefaut}"
+                                       class="form-control" placeholder="0.00">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Prix Vente</label>
+                                <input type="number" step="0.01" th:field="*{prixVente}"
+                                       class="form-control" placeholder="0.00">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Quantité</label>
+                                <input type="number" th:field="*{quantite}"
+                                       class="form-control" placeholder="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Seuil Alerte</label>
+                                <input type="number" th:field="*{seuilAlerte}"
+                                       class="form-control" placeholder="0">
+                                <small class="form-text text-muted">Alerte si quantité ≤ seuil</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3"><i class="fas fa-image me-2"></i>Image du produit</h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">URL de l'image</label>
+                                <input type="text" th:field="*{imageUrl}" class="form-control"
+                                       placeholder="https://... (optionnel si upload)">
+                                <small class="form-text text-muted">Vous pouvez saisir une URL ou charger un fichier ci-dessous</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ou charger un fichier</label>
+                                <input type="file" name="imageFile" accept="image/*" class="form-control">
+                            </div>
+                            <div class="col-12" th:if="${produit.imageUrl != null and !produit.imageUrl.isEmpty()}">
+                                <label class="form-label">Aperçu actuel</label>
+                                <div>
+                                    <img th:src="${produit.imageUrl}" alt="Image produit"
+                                         class="img-thumbnail" style="max-height:150px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="/stock/produits" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

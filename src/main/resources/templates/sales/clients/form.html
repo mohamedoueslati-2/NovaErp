@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Client - NovaERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card" style="max-width: 700px; margin: 0 auto;">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user me-2"></i>
+                <span th:text="${client.id != null} ? 'Modifier Client' : 'Nouveau Client'"></span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/sales/clients/save}" th:object="${client}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="mb-3">
+                    <label class="form-label">Code <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{code}" class="form-control"
+                           th:classappend="${#fields.hasErrors('code')} ? 'is-invalid' : ''"
+                           placeholder="Code client">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nom <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{nom}" class="form-control"
+                           th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid' : ''"
+                           placeholder="Nom du client">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                           placeholder="exemple@email.com">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Téléphone</label>
+                    <input type="text" th:field="*{telephone}" class="form-control"
+                           th:classappend="${#fields.hasErrors('telephone')} ? 'is-invalid' : ''"
+                           placeholder="Numéro de téléphone">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Adresse</label>
+                    <textarea th:field="*{adresse}" class="form-control" rows="3"
+                              th:classappend="${#fields.hasErrors('adresse')} ? 'is-invalid' : ''"
+                              placeholder="Adresse du client"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('adresse')}" th:errors="*{adresse}"></div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/sales/clients" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
