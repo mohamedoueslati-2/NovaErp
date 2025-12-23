@@ -47,15 +47,5 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Produit> produits;
 
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Categorie> categories;
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Fournisseur> fournisseurs;
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Client> clients;
 }

@@ -9,4 +9,5 @@ public interface CategorieService {
     Categorie findById(Long id);
     Categorie save(Categorie categorie, String currentUserEmail);
     void deleteById(Long id);
+    List<Categorie> findByCreatedById(Long userId);
 }

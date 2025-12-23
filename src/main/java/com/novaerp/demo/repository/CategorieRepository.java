@@ -14,4 +14,5 @@ public interface CategorieRepository extends JpaRepository<Categorie, Long> {
     Optional<Categorie> findByNom(String nom);
 
     List<Categorie> findAllByOrderByOrdreAffichageAsc();
+    List<Categorie> findByCreatedById(Long userId);
 }

@@ -34,9 +34,25 @@ public class CategorieController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editCategorie(@PathVariable Long id, Model model) {
-        model.addAttribute("categorie", categorieService.findById(id));
-        return "stock/categories/form";
+    public String editCategorie(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("categorie", categorieService.findById(id));
+            return "stock/categories/form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Catégorie non trouvée");
+            return "redirect:/stock/categories";
+        }
+    }
+
+    @GetMapping("/{id}")
+    public String viewCategorie(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("categorie", categorieService.findById(id));
+            return "stock/categories/view";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Catégorie non trouvée");
+            return "redirect:/stock/categories";
+        }
     }
 
     @PostMapping("/save")
@@ -48,8 +64,12 @@ public class CategorieController {
             return "stock/categories/form";
         }
 
-        categorieService.save(categorie, auth.getName());
-        redirectAttributes.addFlashAttribute("successMessage", "Catégorie enregistrée avec succès");
+        try {
+            categorieService.save(categorie, auth.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Catégorie enregistrée avec succès");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de l'enregistrement : " + e.getMessage());
+        }
         return "redirect:/stock/categories";
     }
 
@@ -59,7 +79,7 @@ public class CategorieController {
             categorieService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Catégorie supprimée avec succès");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la suppression : " + e.getMessage());
         }
         return "redirect:/stock/categories";
     }
